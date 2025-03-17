@@ -1,0 +1,57 @@
+/* Hero section styling */
+.heroSection {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.heroImage {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+}
+
+/* Features section styling */
+.featureIcon {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+}
+
+/* Custom spacing for responsive design */
+.py-md-7 {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+}
+
+@media (max-width: 768px) {
+    .py-md-7 {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    .heroSection {
+        min-height: auto;
+        padding: 4rem 0;
+    }
+}
+
+/* Smooth transitions */
+.transitionAll {
+    transition: all 0.3s ease;
+}
+
+/* Cards hover effect */
+.featureCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1);
+}
+
+/* CTA section styling */
+.ctaSection {
+    background: linear-gradient(135deg, var(--bs-primary) 0%, #3a7bd5 100%);
+}
