@@ -8,6 +8,7 @@ import { db } from '@/utils/firebaseClient';
 import ProfileForm from '@/components/profile/ProfileForm';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import Link from 'next/link';
 
 export default function ProfilePage() {
     const { data: session, status } = useSession();
