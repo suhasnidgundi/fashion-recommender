@@ -89,12 +89,12 @@ export default function ProfilePage() {
                                 <p>{error}</p>
                             </div>
                             <div className="d-grid gap-2 col-md-6 mx-auto mt-4">
-                                <a href="/profile-setup" className="btn btn-primary btn-lg">
+                                <Link href="/profile-setup" className="btn btn-primary btn-lg">
                                     Complete Profile Setup
-                                </a>
-                                <a href="/" className="btn btn-outline-secondary">
+                                </Link>
+                                <Link href="/" className="btn btn-outline-secondary">
                                     Return to Home
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>

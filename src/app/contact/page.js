@@ -17,13 +17,13 @@ export default function ContactPage() {
                         <h1 className="mb-4">Contact Us</h1>
                         <p className="lead mb-4">
                             Have questions about our fashion recommendations? Want to provide feedback?
-                            We'd love to hear from you!
+                            We&apos;d love to hear from you!
                         </p>
 
                         <div className="mb-4">
                             <h3>Our Mission</h3>
                             <p>
-                                At Fashion Recommender, we're committed to helping you find eco-friendly,
+                                At Fashion Recommender, we&apos;re committed to helping you find eco-friendly,
                                 stylish clothing that matches your unique preferences and body type.
                             </p>
                         </div>

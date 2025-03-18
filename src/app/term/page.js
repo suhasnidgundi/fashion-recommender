@@ -29,7 +29,7 @@ export default function TermsPage() {
                             <div className="card-body">
                                 <h2 className="h4 mb-3">2. Use of Service</h2>
                                 <p>
-                                    Fashion Recommender provides a fashion recommendation platform that uses artificial intelligence to suggest clothing and accessories based on user preferences. The service is provided "as is" and "as available" without any warranties, expressed or implied.
+                                    Fashion Recommender provides a fashion recommendation platform that uses artificial intelligence to suggest clothing and accessories based on user preferences. The service is provided &quot;as is&quot; and &quot;as available&quot; without any warranties, expressed or implied.
                                 </p>
                                 <p>
                                     You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account or password.
@@ -41,7 +41,7 @@ export default function TermsPage() {
                             <div className="card-body">
                                 <h2 className="h4 mb-3">3. Recommendations and Affiliate Links</h2>
                                 <p>
-                                    The fashion recommendations provided by our service are based on the information you provide and our algorithm's analysis. We may use affiliate links for recommended products, which means we may receive a commission if you click on a link and make a purchase.
+                                    The fashion recommendations provided by our service are based on the information you provide and our algorithm&apos;s analysis. We may use affiliate links for recommended products, which means we may receive a commission if you click on a link and make a purchase.
                                 </p>
                             </div>
                         </div>
@@ -68,7 +68,7 @@ export default function TermsPage() {
                             <div className="card-body">
                                 <h2 className="h4 mb-3">6. Changes to Terms</h2>
                                 <p>
-                                    We reserve the right to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.
+                                    We reserve the right to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days&apos; notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.
                                 </p>
                             </div>
                         </div>
