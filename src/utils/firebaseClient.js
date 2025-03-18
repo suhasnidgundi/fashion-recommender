@@ -1,26 +1,56 @@
-"use client";
+// src/utils/firebaseClient.js
+import {
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signInWithPopup,
+    GoogleAuthProvider
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase/firestore';
 
-import { initializeApp, getApps } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
-import { getAnalytics } from 'firebase/analytics';
+// Google Auth helper
+export async function signInWithGoogle() {
+    try {
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
 
-const firebaseConfig = {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
-};
+        // Get user details
+        const user = result.user;
+        const credentials = GoogleAuthProvider.credentialFromResult(result);
 
-// Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
-const firebase_auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
-const analytics = getAnalytics(app);
+        return {
+            user,
+            token: credentials?.accessToken,
+            isNewUser: result._tokenResponse?.isNewUser || false
+        };
+    } catch (error) {
+        console.error("Error signing in with Google:", error);
+        throw error;
+    }
+}
 
-export { app, firebase_auth, db, storage, analytics };
+// Email/Password Auth helpers
+export async function signInWithEmail(email, password) {
+    try {
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        return {
+            user: result.user,
+            isNewUser: false
+        };
+    } catch (error) {
+        console.error("Error signing in with email:", error);
+        throw error;
+    }
+}
+
+export async function registerWithEmail(email, password) {
+    try {
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        return {
+            user: result.user,
+            isNewUser: true
+        };
+    } catch (error) {
+        console.error("Error registering with email:", error);
+        throw error;
+    }
+}
