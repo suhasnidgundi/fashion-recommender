@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { getDoc, doc, updateDoc } from 'firebase/firestore';
-import { db } from '@/utils/firebaseClient';
 import ProfileForm from '@/components/profile/ProfileForm';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Link from 'next/link';
+import { db } from '@/lib/firebase/firestore';
 
 export default function ProfilePage() {
     const { data: session, status } = useSession();
