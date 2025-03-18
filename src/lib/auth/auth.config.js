@@ -5,6 +5,7 @@ export const authConfig = {
         error: '/login',
         newUser: '/profile-setup',
     },
+    secret: process.env.NEXTAUTH_SECRET || "q6ouLCfI1DHmS85KpoHzrE67XRYQAlwNUhRkGMynF6E=",
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
             const isLoggedIn = !!auth?.user;
