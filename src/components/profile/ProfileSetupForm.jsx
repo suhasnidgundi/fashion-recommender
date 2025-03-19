@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { createUserProfile } from '@/lib/firebase/firestore';
+import { createUserPreference } from '@/lib/firebase/firestore';
 import PreferenceSelector from './PreferenceSelector';
 import BodyMeasurements from './BodyMeasurements';
 import BudgetRange from './BudgetRange';
@@ -66,7 +66,7 @@ export default function ProfileSetupForm() {
             setError('');
 
             // Save data to Firestore
-            await createUserProfile(session.user.id, formData);
+            await createUserPreference(session.user.id, formData);
 
             // Update user session to mark profile as complete
             await update({ isNewUser: false });

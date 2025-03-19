@@ -77,4 +77,44 @@ export async function getUserProfile(userId) {
     }
 }
 
+export async function updateUserProfile(userId, profileData) {
+    try {
+        const userRef = doc(db, 'users', userId);
+        await setDoc(userRef, {
+            ...profileData,
+            updatedAt: new Date().toISOString()
+        }, { merge: true });
+        return true;
+    } catch (error) {
+        console.error("Error updating user profile:", error);
+        throw error;
+    }
+}
+
+export async function deleteUserProfile(userId) {
+    try {
+        const userRef = doc(db, 'users', userId);
+        await setDoc(userRef, { deleted: true }, { merge: true });
+        return true;
+    } catch (error) {
+        console.error("Error deleting user profile:", error);
+        throw error;
+    }
+}
+
+export async function createUserPreference(userId, preferenceData) {
+    try {
+        const preferenceRef = doc(db, 'preferences', userId);
+        await setDoc(preferenceRef, {
+            ...preferenceData,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        });
+        return true;
+    } catch (error) {
+        console.error("Error creating user preference:", error);
+        throw error;
+    }
+}
+
 export { db, auth, storage, analytics, app };
