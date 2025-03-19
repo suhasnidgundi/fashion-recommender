@@ -10,15 +10,19 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.26.10",
+    "@emailjs/browser": "^4.4.1",
     "bootstrap": "5.3.3",
     "firebase": "^11.4.0",
+    "formik": "^2.4.6",
     "framer-motion": "^12.5.0",
     "lucide-react": "^0.482.0",
     "next": "15.2.2",
     "next-auth": "5.0.0-beta.25",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-slider": "^2.0.6"
+    "react-slider": "^2.0.6",
+    "zod": "^3.24.2",
+    "zod-formik-adapter": "^1.3.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
