@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Heart, ExternalLink, Info } from 'lucide-react';
+import { Heart, ExternalLink, Info, Leaf } from 'lucide-react';
 
 export default function RecommendationCard({ recommendation }) {
     const [isLiked, setIsLiked] = useState(false);
@@ -47,6 +47,7 @@ export default function RecommendationCard({ recommendation }) {
                 </button>
                 <div className="position-absolute bottom-0 start-0 m-2">
                     <span className={`badge bg-${getSustainabilityColor(recommendation.sustainabilityScore)}`}>
+                        <Leaf size={14} className="me-1" />
                         Eco Score: {recommendation.sustainabilityScore}
                     </span>
                 </div>
@@ -55,8 +56,8 @@ export default function RecommendationCard({ recommendation }) {
             <div className="card-body">
                 <h3 className="h5 card-title mb-1">{recommendation.title}</h3>
                 <p className="text-muted small mb-2">{recommendation.brand}</p>
-                <p className="card-text text-truncate mb-2">{recommendation.description}</p>
-                <p className="fw-bold mb-0">${recommendation.price.toFixed(2)}</p>
+                <p className="card-text small mb-2 text-truncate">{recommendation.description}</p>
+                <p className="fw-bold mb-0">₹{parseFloat(recommendation.price).toFixed(2)}</p>
             </div>
 
             <div className="card-footer bg-white d-flex justify-content-between align-items-center">
@@ -68,6 +69,17 @@ export default function RecommendationCard({ recommendation }) {
                         <Info size={14} />
                         <span>Details</span>
                     </Link>
+                    {recommendation.productUrl && (
+                        <a
+                            href={recommendation.productUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-sm btn-outline-success d-flex align-items-center gap-1"
+                        >
+                            <ExternalLink size={14} />
+                            <span>Shop</span>
+                        </a>
+                    )}
                 </div>
             </div>
         </motion.div>

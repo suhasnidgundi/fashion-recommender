@@ -1,41 +1,64 @@
+// src/middleware.js
 import { NextResponse } from 'next/server';
-import { getAuth } from './lib/auth/auth';
+import { getToken } from 'next-auth/jwt';
+
+// Configure paths that don't require authentication
+const publicPaths = [
+    '/',
+    '/login',
+    '/register',
+    '/about',
+    '/privacy',
+    '/terms',
+    '/contact',
+    '/api/auth',
+];
+
+// Checks if a path should be accessible without authentication
+const isPublic = (path) => {
+    return publicPaths.some(publicPath =>
+        path === publicPath ||
+        path.startsWith(`${publicPath}/`) ||
+        path.startsWith(`/_next/`) ||
+        path.startsWith(`/favicon`) ||
+        path.includes('.') // Static files
+    );
+};
 
 export async function middleware(request) {
-    const auth = await getAuth();
     const { pathname } = request.nextUrl;
 
-    // Public routes
-    const publicRoutes = ['/login', '/register', '/api/auth', "/contact", "term", "privacy", "about", "/"];
-    const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
-
-    // Auth checking
-    if (!auth && !isPublicRoute) {
-        return NextResponse.redirect(new URL('/login', request.url));
+    // Allow access to public paths without authentication
+    if (isPublic(pathname)) {
+        return NextResponse.next();
     }
 
-    // Redirect users who haven't completed profile setup
-    if (auth?.user?.isNewUser && pathname !== '/profile-setup' && !isPublicRoute) {
+    // Get the session token
+    const token = await getToken({
+        req: request,
+        secret: process.env.NEXTAUTH_SECRET
+    });
+
+    // If there's no token, redirect to login
+    if (!token) {
+        const url = new URL('/login', request.url);
+        url.searchParams.set('callbackUrl', pathname);
+        return NextResponse.redirect(url);
+    }
+
+    // Check if the user has completed profile setup
+    if (token.isNewUser && !pathname.startsWith('/profile-setup')) {
         return NextResponse.redirect(new URL('/profile-setup', request.url));
     }
 
-    // Redirect authenticated users away from login/register pages
-    if (auth && (pathname === '/login' || pathname === '/register')) {
-        return NextResponse.redirect(new URL('/', request.url));
-    }
-
+    // Continue to the protected route
     return NextResponse.next();
 }
 
+// Configure which paths this middleware applies to
 export const config = {
     matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * - public folder
-         */
-        '/((?!_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.svg$).*)',
+        // Apply to all paths except static files
+        '/((?!_next/static|_next/image|favicon.ico).*)',
     ],
 };
