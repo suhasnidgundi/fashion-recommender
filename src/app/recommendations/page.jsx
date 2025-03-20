@@ -108,6 +108,8 @@ export default function RecommendationPage() {
         } finally {
             setIsLoading(false);
         }
+
+        console.log('Form data:', formData);
     };
 
     const handleFormSubmit = (formData) => {

@@ -1,15 +1,9 @@
+// src/lib/auth.js
 import NextAuth from 'next-auth';
-import { authConfig } from './auth.config';
-import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-import { auth } from '../firebase/firestore';
-
-// Import Firebase auth functions conditionally to avoid edge runtime issues
-let firebaseAuthImport;
-if (typeof window !== "undefined") {
-    // Client-side only
-    firebaseAuthImport = require('firebase/auth');
-}
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { authConfig } from './auth.config';
+import { signInWithEmail, registerWithEmail } from '@/utils/firebaseClient';
 
 export const {
     handlers: { GET, POST },
@@ -18,37 +12,33 @@ export const {
     signOut
 } = NextAuth({
     ...authConfig,
-    secret: process.env.NEXTAUTH_SECRET || "q6ouLCfI1DHmS85KpoHzrE67XRYQAlwNUhRkGMynF6E=",
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             authorization: {
                 params: {
-                    prompt: "consent",
-                    access_type: "offline",
-                    response_type: "code"
+                    prompt: 'consent',
+                    access_type: 'offline',
+                    response_type: 'code'
                 }
             },
             async profile(profile) {
-                // This part runs on the server during OAuth flow, 
-                // so we can't use Firebase auth directly here
-                // We'll handle the Firebase linkage on the client side later
                 return {
-                    id: profile.sub, // Use sub as temporary ID
+                    id: profile.sub,
                     name: profile.name,
                     email: profile.email,
                     image: profile.picture,
-                    isNewUser: false // We'll update this after Firebase auth
+                    isNewUser: false
                 };
             }
         }),
         CredentialsProvider({
-            name: 'Credentials',
+            name: 'Email & Password',
             credentials: {
-                email: { label: "Email", type: "email" },
-                password: { label: "Password", type: "password" },
-                isRegistering: { label: "Is Registering", type: "boolean" }
+                email: { label: 'Email', type: 'email' },
+                password: { label: 'Password', type: 'password' },
+                isRegistering: { label: 'Is Registering', type: 'boolean' }
             },
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) {
@@ -56,54 +46,43 @@ export const {
                 }
 
                 try {
-                    let userCredential;
-                    let isNewUser = false;
+                    const isRegistering = credentials.isRegistering === 'true';
+                    const userCredential = isRegistering
+                        ? await registerWithEmail(credentials.email, credentials.password)
+                        : await signInWithEmail(credentials.email, credentials.password);
 
-                    // Only attempt Firebase auth if we're in a client environment
-                    if (typeof window !== "undefined" && firebaseAuthImport) {
-                        const { signInWithEmailAndPassword, createUserWithEmailAndPassword } = firebaseAuthImport;
-
-                        // If registering, create a new user
-                        if (credentials.isRegistering === 'true') {
-                            userCredential = await createUserWithEmailAndPassword(
-                                auth,
-                                credentials.email,
-                                credentials.password
-                            );
-                            isNewUser = true;
-                        } else {
-                            // Otherwise, sign in
-                            userCredential = await signInWithEmailAndPassword(
-                                auth,
-                                credentials.email,
-                                credentials.password
-                            );
-                        }
-
-                        const user = userCredential.user;
-                        return {
-                            id: user.uid,
-                            name: user.displayName || credentials.email,
-                            email: user.email,
-                            image: user.photoURL,
-                            isNewUser
-                        };
-                    } else {
-                        // Fallback when running in a server context
-                        // This will likely fail in production, but allows build to proceed
-                        console.warn("Firebase auth attempted in server context");
-                        return {
-                            id: "mock-id",
-                            name: credentials.email,
-                            email: credentials.email,
-                            isNewUser: credentials.isRegistering === 'true'
-                        };
-                    }
+                    const user = userCredential.user;
+                    return {
+                        id: user.uid,
+                        name: user.displayName || user.email,
+                        email: user.email,
+                        image: user.photoURL,
+                        isNewUser: isRegistering
+                    };
                 } catch (error) {
-                    console.error("Error in authorize:", error);
                     throw new Error(error.message || 'Authentication failed');
                 }
             }
         })
     ],
+    session: {
+        strategy: 'jwt'
+    },
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.uid = user.id;
+                token.isNewUser = user.isNewUser;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (token) {
+                session.user.id = token.uid;
+                session.user.isNewUser = token.isNewUser;
+            }
+            return session;
+        }
+    },
+    debug: process.env.NODE_ENV === 'development'
 });

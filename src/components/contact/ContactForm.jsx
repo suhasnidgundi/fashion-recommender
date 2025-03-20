@@ -51,7 +51,6 @@ export default function ContactForm() {
                     process.env.NEXT_PUBLIC_EMAILJS_SERVICE,
                     process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE,
                     formRef.current,
-                    // User ID is already initialized in useEffect
                 );
 
                 if (result.status === 200) {
